@@ -55,4 +55,9 @@ public class MonitoredServer {
         this.description = description;
     }
 
+    @Override
+    public String toString() {
+        return "MonitoredServer{id=" + id + ", ip='" + ip + "', name='" + name + "'}";
+    }
+
 }
