@@ -18,14 +18,15 @@ public class CheckResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private CheckStatus status;
     private Long responseTimeMs;
     private Instant checkedAt;
 
     protected CheckResult(){
     }
 
-    public CheckResult(MonitoredServer server, String status, Long responseTimeMs, Instant checkedAt){
+    public CheckResult(MonitoredServer server, CheckStatus status, Long responseTimeMs, Instant checkedAt){
         this.server = server;
         this.status = status;
         this.responseTimeMs = responseTimeMs;

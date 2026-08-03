@@ -2,11 +2,13 @@ package dev.feyruz.serverstatustracking.service;
 
 import dev.feyruz.serverstatustracking.dto.CheckResultResponse;
 import dev.feyruz.serverstatustracking.entity.CheckResult;
+import dev.feyruz.serverstatustracking.entity.CheckStatus;
 import dev.feyruz.serverstatustracking.entity.MonitoredServer;
 import dev.feyruz.serverstatustracking.exception.ServerNotFoundException;
 import dev.feyruz.serverstatustracking.repository.CheckResultRepository;
 import dev.feyruz.serverstatustracking.repository.MonitoredServerRepository;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import java.time.Duration;
@@ -67,16 +69,16 @@ public class HealthCheckService {
                 .orElseThrow(() -> new ServerNotFoundException(serverId));
 
         long start = System.nanoTime();
-        String status;
+        CheckStatus status;
 
         try {
             client.get()
                     .uri("http://" + server.getIp())
                     .retrieve()
                     .toBodilessEntity();
-            status = "UP";
+            status = CheckStatus.UP;
         } catch (Exception e) {
-            status = "DOWN";
+            status = CheckStatus.DOWN;
         }
 
         long elapsed = (System.nanoTime() - start) / 1_000_000;
@@ -92,5 +94,12 @@ public class HealthCheckService {
                 saved.getResponseTimeMs(),
                 saved.getCheckedAt()
         );
+    }
+
+    @Scheduled(fixedRate = 60000)
+    public void checkAllServers() {
+        for (MonitoredServer server : repository.findAll()) {
+            check(server.getId());
+        }
     }
 }
