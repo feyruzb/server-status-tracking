@@ -56,4 +56,8 @@ public class MonitoredServerController {
         return healthCheckService.check(id);
     }
 
+    @GetMapping("/{id}/history")
+    public List<CheckResultResponse> history(@PathVariable Long id) {
+        return healthCheckService.history(id);
+    }
 }

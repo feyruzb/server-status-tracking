@@ -9,9 +9,10 @@ import dev.feyruz.serverstatustracking.repository.MonitoredServerRepository;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class HealthCheckService {
@@ -32,6 +33,32 @@ public class HealthCheckService {
         this.client = RestClient.builder()
                 .requestFactory(factory)
                 .build();
+    }
+
+    public List<CheckResultResponse> history(Long serverId) {
+
+        if (!repository.existsById(serverId)) {
+            throw new ServerNotFoundException(serverId);
+        }
+
+        List<CheckResult> results = repositoryHealth.findByServerIdOrderByCheckedAtDesc(serverId);
+        List<CheckResultResponse> response = new ArrayList<>();
+
+        for (CheckResult result : results) {
+            response.add(toResponse(result));
+        }
+
+        return response;
+    }
+
+    private CheckResultResponse toResponse(CheckResult result) {
+        return new CheckResultResponse(
+                result.getId(),
+                result.getServer().getId(),
+                result.getStatus(),
+                result.getResponseTimeMs(),
+                result.getCheckedAt()
+        );
     }
 
     public CheckResultResponse check(Long serverId) {
