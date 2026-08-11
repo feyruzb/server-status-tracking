@@ -70,8 +70,8 @@ entities, and a global exception handler maps domain exceptions to HTTP status c
 ### Testing
 - [x] `@WebMvcTest` controller tests with MockMvc
 - [x] Cover the 404 and 400 error paths
-- [ ] Unit tests for the service layer with Mockito
-- [ ] `@SpringBootTest` integration test
+- [X] Unit tests for the service layer with Mockito
+- [X] `@SpringBootTest` integration test
 
 ### Data model
 - [ ] `enabled` flag on `MonitoredServer`
