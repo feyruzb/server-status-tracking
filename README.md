@@ -9,19 +9,27 @@ Built as a Spring Boot learning project.
 
 - Java 21, Spring Boot
 - Spring Web, Spring Data JPA, Hibernate
-- H2 (in-memory)
+- PostgreSQL 16 (Docker), H2 for tests
 - Maven
 
 ## Running
+
+Start the database:
+
+```bash
+docker compose up -d
+```
+
+Then the app:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
 The API is available at `http://localhost:8080`.
-H2 console at `http://localhost:8080/h2-console` (JDBC URL `jdbc:h2:mem:testdb`, user `sa`, no password).
 
-Note: H2 runs in memory, so all data is lost on restart.
+Data persists in a Docker volume, so it survives restarts. To wipe it,
+`docker compose down -v`.
 
 ## Tests
 
@@ -89,8 +97,8 @@ entities, and a global exception handler maps domain exceptions to HTTP status c
 - [ ] Thread pool configuration
 
 ### Infrastructure
-- [ ] PostgreSQL in Docker
-- [ ] `docker-compose.yml`
+- [x] PostgreSQL in Docker
+- [x] `docker-compose.yml`
 - [ ] Spring Boot Actuator
 - [ ] Spring Security with JWT
 
