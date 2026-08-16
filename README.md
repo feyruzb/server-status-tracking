@@ -89,7 +89,7 @@ entities, and a global exception handler maps domain exceptions to HTTP status c
 - [x] Scheduler skips disabled servers
 
 ### Queries
-- [ ] Latest check result per server
+- [x] Latest check result per server
 - [ ] Uptime percentage over the last 24 hours
 - [ ] Include latest status in the server list response
 
@@ -100,6 +100,8 @@ entities, and a global exception handler maps domain exceptions to HTTP status c
 ### Infrastructure
 - [x] PostgreSQL in Docker
 - [x] `docker-compose.yml`
+- [ ] Dockerfile for the application (multi-stage build)
+- [ ] Add app as a service in `docker-compose.yml`
 - [ ] Spring Boot Actuator
 - [ ] Spring Security with JWT
 

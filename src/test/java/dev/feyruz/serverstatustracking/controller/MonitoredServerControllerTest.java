@@ -1,6 +1,8 @@
 package dev.feyruz.serverstatustracking.controller;
 
+import dev.feyruz.serverstatustracking.dto.CheckResultResponse;
 import dev.feyruz.serverstatustracking.dto.ServerResponse;
+import dev.feyruz.serverstatustracking.entity.CheckStatus;
 import dev.feyruz.serverstatustracking.exception.ServerNotFoundException;
 import dev.feyruz.serverstatustracking.service.HealthCheckService;
 import dev.feyruz.serverstatustracking.service.MonitoredServerService;
@@ -12,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,5 +70,27 @@ class MonitoredServerControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"ip\":\"example.com\",\"port\":99999,\"name\":\"test\",\"description\":\"test\",\"enabled\":true}"))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void latest_returnsResultWhenPresent() throws Exception {
+
+        CheckResultResponse result = new CheckResultResponse(
+                1L, 1L, CheckStatus.UP, 42L, Instant.now());
+
+        when(healthCheckService.latestResult(1L)).thenReturn(Optional.of(result));
+
+        mockMvc.perform(get("/api/servers/1/latest"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("UP"));
+    }
+
+    @Test
+    void latest_returnsNotFoundWhenNoChecksYet() throws Exception {
+
+        when(healthCheckService.latestResult(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/servers/1/latest"))
+                .andExpect(status().isNotFound());
     }
 }

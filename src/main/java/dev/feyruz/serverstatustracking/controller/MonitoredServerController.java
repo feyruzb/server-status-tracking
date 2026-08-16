@@ -60,4 +60,10 @@ public class MonitoredServerController {
     public List<CheckResultResponse> history(@PathVariable Long id) {
         return healthCheckService.history(id);
     }
+
+    @GetMapping("/{id}/latest")
+    public ResponseEntity<CheckResultResponse> latest(@PathVariable Long id){
+        return ResponseEntity.of(healthCheckService.latestResult(id));
+    }
+
 }

@@ -7,6 +7,7 @@ import dev.feyruz.serverstatustracking.entity.MonitoredServer;
 import dev.feyruz.serverstatustracking.exception.ServerNotFoundException;
 import dev.feyruz.serverstatustracking.repository.CheckResultRepository;
 import dev.feyruz.serverstatustracking.repository.MonitoredServerRepository;
+import org.hibernate.annotations.DialectOverride;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HealthCheckService {
@@ -96,6 +98,12 @@ public class HealthCheckService {
         );
     }
 
+    public Optional<CheckResultResponse> latestResult(Long serverId) {
+        return repositoryHealth.findFirstByServerIdOrderByCheckedAtDesc(serverId)
+                .map(this::toResponse);
+    }
+
+    // Schedules
     @Scheduled(fixedRate = 60000)
     public void checkAllServers() {
         for (MonitoredServer server : repository.findByEnabledTrue()) {
