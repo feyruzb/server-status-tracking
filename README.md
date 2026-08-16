@@ -37,8 +37,8 @@ Data persists in a Docker volume, so it survives restarts. To wipe it,
 ./mvnw test
 ```
 
-Controller tests use `@WebMvcTest` with mocked services, covering the happy path,
-404 on a missing server, and 400 on validation failure.
+Tests run against an in-memory H2 database, configured in `src/test/resources`,
+so they never touch the development Postgres instance.
 
 ## Endpoints
 
@@ -66,8 +66,9 @@ curl http://localhost:8080/api/servers/1/history
 ## How it works
 
 Servers are checked automatically every 60 seconds by a scheduled background task.
-Each check makes an HTTP GET to the server's address with a 3 second timeout and
-records the outcome as `UP` or `DOWN` along with the response time.
+Each check makes an HTTP GET to the server's address and port with a 3 second timeout
+and records the outcome as `UP` or `DOWN` along with the response time. Servers with
+`enabled: false` are skipped by the scheduler but can still be checked manually.
 
 Architecture is layered: controllers handle HTTP, services hold business logic,
 repositories handle persistence. DTOs separate the API contract from the database
@@ -78,14 +79,14 @@ entities, and a global exception handler maps domain exceptions to HTTP status c
 ### Testing
 - [x] `@WebMvcTest` controller tests with MockMvc
 - [x] Cover the 404 and 400 error paths
-- [X] Unit tests for the service layer with Mockito
-- [X] `@SpringBootTest` integration test
+- [x] Unit tests for the service layer with Mockito
+- [x] `@SpringBootTest` integration test
 
 ### Data model
-- [ ] `enabled` flag on `MonitoredServer`
-- [ ] `port` field so checks aren't hardcoded to port 80
-- [ ] `@Transactional` on write methods
-- [ ] Scheduler skips disabled servers
+- [x] `enabled` flag on `MonitoredServer`
+- [x] `port` field so checks aren't hardcoded to port 80
+- [x] `@Transactional` on write methods
+- [x] Scheduler skips disabled servers
 
 ### Queries
 - [ ] Latest check result per server
