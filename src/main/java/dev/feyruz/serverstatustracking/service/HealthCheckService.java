@@ -73,7 +73,7 @@ public class HealthCheckService {
 
         try {
             client.get()
-                    .uri("http://" + server.getIp())
+                    .uri(buildUri(server))
                     .retrieve()
                     .toBodilessEntity();
             status = CheckStatus.UP;
@@ -98,8 +98,16 @@ public class HealthCheckService {
 
     @Scheduled(fixedRate = 60000)
     public void checkAllServers() {
-        for (MonitoredServer server : repository.findAll()) {
+        for (MonitoredServer server : repository.findByEnabledTrue()) {
             check(server.getId());
         }
+    }
+
+    // Helper methods
+    private String buildUri(MonitoredServer server) {
+        if (server.getPort() == null) {
+            return "http://" + server.getIp();
+        }
+        return "http://" + server.getIp() + ":" + server.getPort();
     }
 }

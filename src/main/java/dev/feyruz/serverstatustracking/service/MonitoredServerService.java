@@ -40,8 +40,10 @@ public class MonitoredServerService {
 
         MonitoredServer server = new MonitoredServer(
                 request.ip(),
+                request.port(),
                 request.name(),
-                request.description()
+                request.description(),
+                request.enabled()
         );
 
         MonitoredServer saved = repository.save(server);
@@ -55,8 +57,10 @@ public class MonitoredServerService {
                 .orElseThrow(() -> new ServerNotFoundException(id));
 
         currentConfiguration.setIp(request.ip());
+        currentConfiguration.setPort(request.port());
         currentConfiguration.setName(request.name());
         currentConfiguration.setDescription(request.description());
+        currentConfiguration.setEnabled(request.enabled());
 
         MonitoredServer saved = repository.save(currentConfiguration);
 
@@ -75,8 +79,10 @@ public class MonitoredServerService {
         return new ServerResponse(
                 server.getId(),
                 server.getIp(),
+                server.getPort(),
                 server.getName(),
-                server.getDescription()
+                server.getDescription(),
+                server.isEnabled()
         );
     }
 

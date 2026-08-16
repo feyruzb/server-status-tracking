@@ -13,15 +13,19 @@ public class MonitoredServer {
     private Long id;
 
     private String ip;
+    private Integer port;
     private String name;
     private String description;
+    private boolean enabled = true;
 
     protected MonitoredServer(){
     }
-    public MonitoredServer(String ip, String name, String description) {
+    public MonitoredServer(String ip, Integer port, String name, String description, boolean enabled) {
         this.ip = ip;
+        this.port = port;
         this.name = name;
         this.description = description;
+        this.enabled = enabled;
     }
 
     // ======  GETTERS ========
@@ -33,6 +37,8 @@ public class MonitoredServer {
         return ip;
     }
 
+    public Integer getPort() { return port; }
+
     public String getName(){
         return name;
     }
@@ -41,11 +47,15 @@ public class MonitoredServer {
         return description;
     }
 
+    public boolean isEnabled(){ return enabled; }
+
     // ======  SETTERS ========
 
     public void setIp(String ip){
         this.ip = ip;
     }
+
+    public void setPort(Integer port) { this.port = port; }
 
     public void setName(String name){
         this.name = name;
@@ -55,9 +65,11 @@ public class MonitoredServer {
         this.description = description;
     }
 
+    public void setEnabled( boolean enabled) { this.enabled = enabled; }
+
     @Override
     public String toString() {
-        return "MonitoredServer{id=" + id + ", ip='" + ip + "', name='" + name + "'}";
+        return "MonitoredServer{id=" + id + ", ip='" + ip + "'"+ ", port= '" + port + "', name=<" + name + ">}";
     }
 
 }
