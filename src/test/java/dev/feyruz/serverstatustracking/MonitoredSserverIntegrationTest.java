@@ -1,8 +1,9 @@
 package dev.feyruz.serverstatustracking;
 
-import dev.feyruz.serverstatustracking.dto.ServerResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 public class MonitoredSserverIntegrationTest {
 
     @Autowired
@@ -27,16 +29,18 @@ public class MonitoredSserverIntegrationTest {
         // 1. POST a server, capture the response
         mockMvc.perform(post("/api/servers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"ip\":\"192.168.1.1\",\"name\":\"Server1\",\"description\":\"Description\"}"))
+                        .content("{\"ip\":\"192.168.1.1\",\"port\":\"80\",\"name\":\"Server1\",\"description\":\"test\",\"enabled\":true}"))
                 .andExpect(status().isOk());
-
 
         // 2. GET the list, assert the server is in it
 
         mockMvc.perform(get("/api/servers"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Server1"))
-                .andExpect(jsonPath("$[0].ip").value("192.168.1.1"));
+                .andExpect(jsonPath("$[0].ip").value("192.168.1.1"))
+                .andExpect(jsonPath("$[0].port").value("80"))
+                .andExpect(jsonPath("$[0].enabled").value(true));
+
     }
 
 

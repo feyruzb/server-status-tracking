@@ -34,7 +34,7 @@ class MonitoredServerControllerTest {
 
     @Test
     void findAll_returnsServers() throws Exception {
-        ServerResponse server = new ServerResponse(1L, "192.168.1.1", "Server1", "Description");
+        ServerResponse server = new ServerResponse(1L, "192.168.1.1", 80, "Server1", "Description", true);
 
         when(service.findAll()).thenReturn(List.of(server));
 
@@ -55,8 +55,16 @@ class MonitoredServerControllerTest {
     void create_returnsBadRequestWhenIpIsBlank() throws Exception {
         mockMvc.perform(post("/api/servers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"ip\":\"\",\"name\":\"test\",\"description\":\"test\"}"))
+                        .content("{\"ip\":\"\",\"port\":\"80\",\"name\":\"test\",\"description\":\"test\",\"enabled\":true}"))
                 .andExpect(status().isBadRequest());
 
+    }
+
+    @Test
+    void create_returnsBadRequestWhenPortOutOfRange() throws Exception {
+        mockMvc.perform(post("/api/servers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"ip\":\"example.com\",\"port\":99999,\"name\":\"test\",\"description\":\"test\",\"enabled\":true}"))
+                .andExpect(status().isBadRequest());
     }
 }

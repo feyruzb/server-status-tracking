@@ -4,6 +4,7 @@ import dev.feyruz.serverstatustracking.dto.ServerResponse;
 import dev.feyruz.serverstatustracking.entity.MonitoredServer;
 import dev.feyruz.serverstatustracking.exception.ServerNotFoundException;
 import dev.feyruz.serverstatustracking.repository.MonitoredServerRepository;
+import org.hibernate.type.TrueFalseConverter;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -18,7 +19,7 @@ public class MonitoredServerServiceTest {
 
     @Test
     void testFindByIdSuccess(){
-        MonitoredServer server = new MonitoredServer("192.168.1.1", "Server1", "Description");
+        MonitoredServer server = new MonitoredServer("192.168.1.1", 1234, "Server1", "Description", true);
         when(repository.findById(1L)).thenReturn(Optional.of(server));
 
         ServerResponse result = service.findById(1L);
